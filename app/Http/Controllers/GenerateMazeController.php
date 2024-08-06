@@ -119,20 +119,10 @@ class GenerateMazeController extends Controller
 
     private function setDifficulty($difficulty)
     {
-        switch ($difficulty) {
-            case "hard":
-                $this->n = 20;
-                $this->m = 20;
-                break;
-            case "medium":
-                $this->n = 15;
-                $this->m = 15;
-                break;
-            default:
-                $this->n = 10;
-                $this->m = 10;
-        }
+        [$this->n, $this->m] = match ($difficulty) {
+            'hard' => [20, 20],
+            'medium' => [15, 15],
+            default => [10, 10],
+        };
     }
-
 }
-
