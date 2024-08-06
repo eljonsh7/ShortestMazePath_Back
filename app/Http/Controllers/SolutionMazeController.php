@@ -24,10 +24,13 @@ class SolutionMazeController extends Controller
         $this->maze = $data['data'];
         $this->n = sizeof($this->maze);
         $this->m = sizeof($this->maze);
-        if ($solution == 'bfs') {
-            $this->bfs();
-        } else if ($solution == "dijkstra") {
-            $this->dijkstra();
+        switch ($solution) {
+            case 'bfs':
+                $this->bfs();
+                break;
+            default:
+                $this->dijkstra();
+                break;
         }
         return $this->path;
     }
