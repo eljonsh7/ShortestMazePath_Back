@@ -23,7 +23,7 @@ class SolutionMazeController extends Controller
         $data = $request->json()->all();
         $this->maze = $data['data'];
         $this->n = sizeof($this->maze);
-        $this->m = sizeof($this->maze);
+        $this->m = $this->n;
 
         match ($solution) {
             'bfs' => $this->bfs(),
