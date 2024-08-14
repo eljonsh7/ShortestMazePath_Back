@@ -26,7 +26,7 @@ class MultiplayerMazeController extends Controller
         Cache::put($cacheKey, $users);
 
         $pusher = new Pusher('3da9f69ec8e88d055c94', '0ece1235e6a2b9dad769', '1848816', ['cluster' => 'eu', 'useTLS' => 'https']);
-        $pusher->trigger("multi-player." . $maze->id, "UserAdded", $users);
+        $pusher->trigger("multi-player." . $maze->id, "UserAdded", ['user' => $data['name'], 'users' => $users]);
 
         return response()->json([
             'maze' => json_decode($maze->maze),
@@ -85,6 +85,12 @@ class MultiplayerMazeController extends Controller
 
         $pusher = new Pusher('3da9f69ec8e88d055c94', '0ece1235e6a2b9dad769', '1848816', ['cluster' => 'eu', 'useTLS' => 'https']);
         $pusher->trigger("multi-player." . $maze->id, "UserFinished", ['user' => $data['name'], 'time' => $data['time']]);
+
+        foreach ($users as $user) {
+            if(isset($user['finished'])) {
+                Cache::delete($cacheKey);
+            }
+        }
 
         return response()->json([
             'maze_id' => $maze->id,
