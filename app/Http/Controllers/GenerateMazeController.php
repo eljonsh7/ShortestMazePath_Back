@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Maze;
 use Illuminate\Http\Request;
 
 class GenerateMazeController extends Controller
@@ -124,5 +125,15 @@ class GenerateMazeController extends Controller
             'medium' => [15, 15],
             default => [10, 10],
         };
+    }
+
+    function storeMaze($difficulty)
+    {
+        $maze = $this->generateMaze($difficulty);
+
+        $mazeObject = Maze::create(['maze' => json_encode($maze)]);
+        $mazeObject['maze'] = $maze;
+
+        return $mazeObject;
     }
 }
