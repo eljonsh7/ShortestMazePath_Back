@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\AllReadyEvent;
 use App\Events\CommunicationEvent;
 use App\Models\Maze;
+use App\Providers\PusherServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Pusher\Pusher;
@@ -25,8 +26,7 @@ class MultiplayerMazeController extends Controller
 
         Cache::put($cacheKey, $users);
 
-        $pusher = new Pusher('3da9f69ec8e88d055c94', '0ece1235e6a2b9dad769', '1848816', ['cluster' => 'eu', 'useTLS' => 'https']);
-        $pusher->trigger("multi-player." . $maze->id, "UserAdded", ['user' => $data['name'], 'users' => $users]);
+        (new PusherServiceProvider())->trigger("multi-player." . $maze->id, "UserAdded", ['user' => $data['name'], 'users' => $users]);
 
         return response()->json([
             'maze' => json_decode($maze->maze),
@@ -55,8 +55,7 @@ class MultiplayerMazeController extends Controller
             $are_all_ready = $are_all_ready && $user;
         }
 
-        $pusher = new Pusher('3da9f69ec8e88d055c94', '0ece1235e6a2b9dad769', '1848816', ['cluster' => 'eu', 'useTLS' => 'https']);
-        $pusher->trigger("multi-player." . $maze->id, "AllUsersReady", ['users' => $users, 'are_all_ready' => $are_all_ready]);
+        (new PusherServiceProvider())->trigger("multi-player." . $maze->id, "AllUsersReady", ['users' => $users, 'are_all_ready' => $are_all_ready]);
 
 
         return response()->json([
@@ -83,8 +82,7 @@ class MultiplayerMazeController extends Controller
 
         broadcast(new CommunicationEvent($data['name'], $data['time'], $maze->id))->toOthers();
 
-        $pusher = new Pusher('3da9f69ec8e88d055c94', '0ece1235e6a2b9dad769', '1848816', ['cluster' => 'eu', 'useTLS' => 'https']);
-        $pusher->trigger("multi-player." . $maze->id, "UserFinished", ['user' => $data['name'], 'time' => $data['time']]);
+        (new PusherServiceProvider())->trigger("multi-player." . $maze->id, "UserFinished", ['user' => $data['name'], 'time' => $data['time']]);
 
         foreach ($users as $user) {
             if(isset($user['finished'])) {
